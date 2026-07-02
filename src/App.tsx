@@ -24,7 +24,11 @@ import {
   TrendingUp,
   Clock,
   ClipboardList,
-  Calendar
+  Calendar,
+  Zap,
+  Atom,
+  Languages,
+  AlertCircle
 } from "lucide-react";
 import { CURRICULUM_DATA, ADVICE_QUOTES, SUBJECT_METADATA } from "./data";
 import confetti from "canvas-confetti";
@@ -264,7 +268,6 @@ export default function App() {
       "نموونەت زۆر بێت",
       "وەڵامی دروست"
     ];
-    // Check if any of the positive keywords are present
     return correctKeywords.some(keyword => text.includes(keyword));
   };
 
@@ -328,24 +331,13 @@ export default function App() {
   // Set initial welcome message from Mamosta Taybet once configured
   useEffect(() => {
     if (isConfigured && messages.length === 0) {
-      const subjectLabel = SUBJECT_METADATA[activeSubject]?.label || "بیرکاری";
       const levelLabel = studentLevel === "beginner" ? "سەرەتا" : studentLevel === "intermediate" ? "مامناوەند" : "پێشکەوتوو";
       
       setMessages([
         {
           id: "welcome",
           role: "assistant",
-          content: `سڵاو لە قوتابی زیرەک و بەپەرۆشم، **${studentName}**! زۆر بەخێرهاتی بۆ پۆلی زیرەکی **مامۆستای تایبەت 🤖📚**. 🌟
-
-ئێستا تۆ لە پۆلی **${grade}**یت و ئاستی فێربوونت وەک [ **${levelLabel}** ] دەستنیشانکراوە. من لێرەم تا بە شێوازێکی زانستی و هاوچەرخ یارمەتیت بدەم ببیتە یەکەم لە بابەتەکانی **بیرکاری، فیزیا، کیمیا، و ئینگلیزی**.
-
-ڕێسا کارپێکراوەکەم زۆر ئاسانە:
-1. ڕوونکردنەوەی تیۆری خێرا پێشکەش دەکەم.
-2. هەنگاو بە هەنگاو شیکاری دەکەین.
-3. نموونەیەکی بەهێزی ژیانی ڕۆژانە باس دەکەین.
-4. لە کۆتاییدا پرسیارێکی ڕاهێنانیت بۆ دادەنێم تا خۆت تاقی بکەیتەوە!
-
-با پێکەوە فێربوون بکەینە چێژ! 🚀`,
+          content: `سڵاو لە قوتابی زیرەک و بەپەرۆشم، **${studentName}**! زۆر بەخێرهاتی بۆ پۆلی زیرەکی **مامۆستای تایبەت 🤖📚**. 🌟\n\nئێستا تۆ لە پۆلی **${grade}**یت و ئاستی فێربوونت وەک [ **${levelLabel}** ] دەستنیشانکراوە. من لێرەم تا بە شێوازێکی زانستی و هاوچەرخ یارمەتیت بدەم ببیتە یەکەم لە بابەتەکانی **بیرکاری، فیزیا، کیمیا، و ئینگلیزی**.\n\nڕێسا کارپێکراوەکەم زۆر ئاسانە:\n1. ڕوونکردنەوەی تیۆری خێرا پێشکەش دەکەم.\n2. هەنگاو بە هەنگاو شیکاری دەکەین.\n3. نموونەیەکی بەهێزی ژیانی ڕۆژانە باس دەکەین.\n4. لە کۆتاییدا پرسیارێکی ڕاهێنانیت بۆ دادەنێم تا خۆت تاقی بکەیتەوە!\n\nبا پێکەوە فێربوون بکەینە چێژ! 🚀`,
           timestamp: new Date()
         },
         {
@@ -369,7 +361,7 @@ export default function App() {
     const startMsg: Message = {
       id: Date.now().toString(),
       role: "assistant",
-      content: `قوتابی خۆشەویستم ${studentName}، بەخێرهاتی بۆ هەڵسەنگاندنی ئاست لە بابەت و دەرسەکانی **${subjectLabel}** بۆ پۆلی **${grade}**! 📝\n\nمن ٥ پرسیاری کورت و گرنگت ئاڕاستە دەکەم کە لە ئاسانەوە بەرەو قورس دەڕۆن، پاشان ئاستت لە سەرەوە نوێ دەکەینەوە.\n\nتکایە کاتێک ئامادەبوویت، لێرە بنووسە **"ئامادەم"** یان بنووسە **"دەست پێ بکە"** تاوەکو یەکەم پرسیارت بۆ بنێرم!`,
+      content: `قوتابی خۆشەویستم ${studentName}، بەخێراتی بۆ هەڵسەنگاندنی ئاست لە بابەت و دەرسەکانی **${subjectLabel}** بۆ پۆلی **${grade}**! 📝\n\nمن ٥ پرسیاری کورت و گرنگت ئاڕاستە دەکەم کە لە ئاسانەوە بەرەو قورس دەڕۆن، پاشان ئاستت لە سەرەوە نوێ دەکەینەوە.\n\nتکایە کاتێک ئامادەبوویت، لێرە بنووسە **"ئامادەم"** یان بنووسە **"دەست پێ بکە"** تاوەکو یەکەم پرسیارت بۆ بنێرم!`,
       timestamp: new Date()
     };
     
@@ -422,11 +414,7 @@ export default function App() {
       {
         id: "welcome-init",
         role: "assistant",
-        content: `بەخێرهاتی **${nameInput.trim()}** گیان بۆ لای **مامۆستای تایبەت 🤖📚**!
-        
-پڕۆفایلەکەت بە سەرکەوتوویی جێگیرکرا: پۆلی **${gradeInput}** • ئاستی **${levelLabel}**.
-
-من ئامادەم بۆ هەر پرسیار و تێگەیشتنێکی قووڵ لە بابەتەکانی زانست و زمان. بابەتێکی دیاریکراو دەستنیشان بکە یان هەر ئێستا پرسیار بکە! ✨`,
+        content: `بەخێرهاتی **${nameInput.trim()}** گیان بۆ لای **مامۆستای تایبەت 🤖📚**!\n\nپڕۆفایلەکەت بە سەرکەوتوویی جێگیرکرا: پۆلی **${gradeInput}** • ئاستی **${levelLabel}**.\n\nمن ئامادەم بۆ هەر پرسیار و تێگەیشتنێکی قووڵ لە بابەتەکانی زانست و زمان. بابەتێکی دیاریکراو دەستنیشان بکە یان هەر ئێستا پرسیار بکە! ✨`,
         timestamp: new Date()
       }
     ]);
@@ -542,10 +530,8 @@ export default function App() {
       const subjectLabel = SUBJECT_METADATA[activeSubject]?.label || "گشتی";
       const levelLabel = studentLevel === "beginner" ? "سەرەتا" : studentLevel === "intermediate" ? "مامناوەند" : "پێشکەوتوو";
       
-      // Format the prompt text exactly as requested: "لە بابەتی {بابەت} بۆ پۆلی {پۆل}: {پرسیاری بەکارهێنەر}"
       const formattedText = `لە بابەتی ${subjectLabel} بۆ پۆلی ${grade}: ${text}`;
 
-      // Construct payload with the last user message mapped to the formatted prompt
       const payload = {
         messages: nextMessages.map((m, index) => {
           if (index === nextMessages.length - 1 && m.role === "user") {
@@ -566,7 +552,6 @@ export default function App() {
         isAssessment: isAssessmentMode
       };
 
-      // Set headers. If customApiKey is saved, we send it over in custom header (if it's not the placeholder)
       const headers: Record<string, string> = {
         "Content-Type": "application/json"
       };
@@ -592,7 +577,6 @@ export default function App() {
 
       let responseText = data.text || "مەخابن قوتابی خۆشەویستم، نەمتوانی وەڵامەکەت بدەمەوە. تکایە دووبارە هەوڵ بدەرەوە.";
       
-      // Parse level evaluation result if present in response
       const levelRegex = /\[LEVEL_RESULT:\s*(beginner|intermediate|advanced)\]/i;
       const match = responseText.match(levelRegex);
       if (match) {
@@ -600,22 +584,16 @@ export default function App() {
         setStudentLevel(detectedLevel);
         localStorage.setItem("mamosta_student_level", detectedLevel);
         
-        // Disable assessment mode
         setIsAssessmentMode(false);
         localStorage.removeItem("mamosta_is_assessment_mode");
         
-        // Clean the special tag from the response so the user doesn't see raw code
         responseText = responseText.replace(levelRegex, "").trim();
-        
-        // Append a beautiful congratulations message
         responseText += `\n\n🎉 **پیرۆزە! هەڵسەنگاندنەکە تەواو بوو. ئاستی فێربوونت بە سەرکەوتوویی نوێکرایەوە بۆ: [ ${detectedLevel === "beginner" ? "سەرەتا" : detectedLevel === "intermediate" ? "مامناوەند" : "پێشکەوتوو"} ]**`;
 
-        // Award 25 points for completing assessment
         setTimeout(() => {
           addPoints(25, "بۆ تەواوکردنی هەڵسەنگاندنی ئاست 🏆");
         }, 800);
       } else {
-        // Check for correct answer keywords
         if (isCorrectAnswerFeedback(responseText)) {
           setTimeout(() => {
             addPoints(10, "بۆ وەڵامی دروست بۆ پرسیاری مامۆستا 🌟");
@@ -648,7 +626,6 @@ export default function App() {
     }
   };
 
-  // Handle click on pre-made topic
   const handleSelectTopic = (title: string) => {
     const subjectLabel = SUBJECT_METADATA[activeSubject]?.label || "بیرکاری";
     const promptText = `مامۆستای ئازیز، دەمەوێت بابەتی "${title}" لە وانەی ${subjectLabel} بە تەواوی فێرببم. تکایە بەپێی ڕێساکەت تیۆری، شیکار، نموونەی ژیان و پاشان ڕاهێنانم بۆ بنووسە.`;
@@ -656,7 +633,6 @@ export default function App() {
     if (isMobileSidebarOpen) setIsMobileSidebarOpen(false);
   };
 
-  // Handle click on pre-made exercise
   const handleSelectExercise = (exercise: any) => {
     setSelectedExerciseId(exercise.id);
     const subjectLabel = SUBJECT_METADATA[activeSubject]?.label || "بیرکاری";
@@ -665,14 +641,12 @@ export default function App() {
     if (isMobileSidebarOpen) setIsMobileSidebarOpen(false);
   };
 
-  // Send feedback of a pre-made question
   const handleSendPredefinedAnswer = (exercise: any) => {
     const promptText = `مامۆستا من وای دەبینم وەڵامی پرسیاری "${exercise.title}" بریتییە لە: [ ${exercise.suggestedAnswer} ]. ئایا ئەمە دروستە؟`;
     handleSendMessage(promptText);
     if (isMobileSidebarOpen) setIsMobileSidebarOpen(false);
   };
 
-  // Get active subject curriculum
   const activeSubjectData = CURRICULUM_DATA[grade]?.[activeSubject] || { topics: [], exercises: [] };
 
   return (
@@ -680,26 +654,26 @@ export default function App() {
       
       {/* 1. WELCOME PROFILE INITIAL SETUP */}
       {!isConfigured ? (
-        <div className="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900">
-          <div id="setup-card" className="w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-100 p-8 md:p-10 relative overflow-hidden transition-all">
-            <div className="absolute top-0 right-0 left-0 h-3 bg-gradient-to-r from-blue-400 via-sky-400 to-indigo-400" />
+        <div className="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-blue-600 via-indigo-600 to-indigo-900">
+          <div id="setup-card" className="w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-100 p-6 md:p-10 relative overflow-hidden transition-all duration-300">
+            <div className="absolute top-0 right-0 left-0 h-2 bg-gradient-to-r from-blue-500 via-sky-400 to-indigo-500" />
             
             <div className="text-center mb-8 mt-4">
-              <div className="inline-flex p-4 bg-blue-50 text-blue-600 rounded-2xl mb-4 animate-bounce">
-                <Brain className="w-12 h-12" />
+              <div className="inline-flex p-4 bg-blue-50 text-blue-600 rounded-2xl mb-4 shadow-sm border border-blue-100/50">
+                <Brain className="w-10 h-10 text-blue-600" />
               </div>
-              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">مامۆستای تایبەت 🤖📚</h1>
-              <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed">
-                بەخێربێیت بۆ هاوڕێی زیرەک و پێشکەوتووی خوێندکارانی نایاب. لێرە زانست و زمان بە چێژەوە فێرببە.
+              <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-2">مامۆستای تایبەت 🤖📚</h1>
+              <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed font-medium">
+                سیستەمی فەرمی خوێندنی وەزارەتی پەروەردە • پۆلی ٩ تا ١٢ زانستی
               </p>
             </div>
 
             <form onSubmit={handleSaveProfile} className="space-y-6">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">ناوی تەواوت:</label>
+                <label className="block text-xs font-black text-slate-700 uppercase tracking-wider mb-2">ناوی تەواوی قوتابی:</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-slate-400">
-                    <User className="w-5 h-5" />
+                  <span className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                    <User className="w-5 h-5 text-slate-400" />
                   </span>
                   <input
                     type="text"
@@ -707,24 +681,24 @@ export default function App() {
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
                     placeholder="بۆ نموونە: ئاران، ڤان، هێلین"
-                    className="w-full pr-11 pl-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white text-slate-800 font-medium text-sm transition"
+                    className="w-full pr-11 pl-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 font-bold text-sm transition"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">پۆلی خوێندن:</label>
-                  <div className="grid grid-cols-4 gap-1.5">
+                  <label className="block text-xs font-black text-slate-700 uppercase tracking-wider mb-2">پۆلی خوێندن:</label>
+                  <div className="grid grid-cols-4 gap-2">
                     {["9", "10", "11", "12"].map((g) => (
                       <button
                         key={g}
                         type="button"
                         onClick={() => setGradeInput(g)}
-                        className={`py-3 px-1 rounded-xl border text-xs font-black transition-all ${
+                        className={`py-3 rounded-xl border text-xs font-black transition-all duration-200 ${
                           gradeInput === g
-                            ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20"
-                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                            ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/10"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100/85"
                         }`}
                       >
                         پۆلی {g === "9" ? "٩" : g === "10" ? "١٠" : g === "11" ? "١١" : "١٢"}
@@ -734,8 +708,8 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">ئاستی ئێستات لە زانستدا:</label>
-                  <div className="grid grid-cols-3 gap-1.5">
+                  <label className="block text-xs font-black text-slate-700 uppercase tracking-wider mb-2">ئاستی ئێستات لە زانستدا:</label>
+                  <div className="grid grid-cols-3 gap-2">
                     {[
                       { key: "beginner", label: "سەرەتا" },
                       { key: "intermediate", label: "مامناوەند" },
@@ -745,10 +719,10 @@ export default function App() {
                         key={lvl.key}
                         type="button"
                         onClick={() => setLevelInput(lvl.key)}
-                        className={`py-3 px-1 rounded-xl border text-xs font-bold transition-all ${
+                        className={`py-3 rounded-xl border text-xs font-black transition-all duration-200 ${
                           levelInput === lvl.key
-                            ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20"
-                            : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"
+                            ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/10"
+                            : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100/85"
                         }`}
                       >
                         {lvl.label}
@@ -758,41 +732,40 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Gemini API Key input field requested in instructions */}
               <div className="pt-2 border-t border-slate-100">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <label className="block text-xs font-black text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
                   <span>کلیلی Gemini API (ئارەزوومەندانە):</span>
-                  <span className="text-[10px] text-blue-600 font-medium">پەسەندترە بۆ سەربەخۆیی تەواو</span>
+                  <span className="text-[10px] text-blue-600 font-bold">بۆ کارکردنی سەربەخۆ 🔑</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-slate-400">
-                    <Key className="w-4 h-4" />
+                  <span className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                    <Key className="w-4 h-4 text-slate-400" />
                   </span>
                   <input
                     type="password"
                     value={apiKeyInput}
                     onChange={(e) => setApiKeyInput(e.target.value)}
-                    placeholder="کلیلی AI تایبەت بە خۆت لێرە بنووسە (یاخود بەتاڵی جێبهێڵە)"
-                    className="w-full pr-10 pl-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white text-slate-800 text-xs font-mono transition"
+                    placeholder="کلیلی AI تایبەت بە خۆت لێرە بنووسە (یان بەتاڵی جێبهێڵە)"
+                    className="w-full pr-11 pl-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-slate-800 text-xs font-mono transition"
                   />
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed">
-                  ئەگەر ئەم بەشە بەتاڵ جێبهێڵیت، سیستەمی "مامۆستای تایبەت" بە شێوەیەکی خۆکار سێرڤەری گشتی و پارێزراوی کۆمپانیا بەکاردەهێنێت.
+                <p className="text-[10px] text-slate-400 mt-2 leading-relaxed font-medium">
+                  ئەگەر ئەم بەشە بەتاڵ بێت، سیستەمی "مامۆستای تایبەت" بە شێوەیەکی ئۆتۆماتیکی سێرڤەری گشتی پلاتفۆرمەکە بەکاردەهێنێت.
                 </p>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-4 rounded-2xl shadow-lg shadow-blue-600/20 transition duration-150 transform active:scale-[0.98] flex items-center justify-center gap-2 text-sm"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3.5 px-4 rounded-xl shadow-lg shadow-blue-500/15 transition-all duration-150 transform active:scale-[0.99] flex items-center justify-center gap-2 text-sm"
               >
-                <GraduationCap className="w-5 h-5" />
-                دەستپێکردنی وانەکە و فێربوون
+                <GraduationCap className="w-5 h-5 shrink-0" />
+                <span>دەستپێکردنی پۆلی زیرەک 🚀</span>
               </button>
             </form>
 
-            <div className="mt-6 pt-5 border-t border-slate-100 text-center">
-              <p className="text-[10px] text-slate-400">
-                سیستەمی فەرمی خوێندنی وەزارەتی پەروەردە • پۆلی 9 تا 12 زانستی و وێژەیی
+            <div className="mt-8 pt-5 border-t border-slate-100 text-center">
+              <p className="text-[10px] text-slate-400 font-bold">
+                سیستەمی "مامۆستای تایبەت" یەکەمین ڕێبەری خوێندنی زیرەکە بە زمانی کوردی ☀️
               </p>
             </div>
           </div>
@@ -800,112 +773,92 @@ export default function App() {
       ) : (
         
         // 2. MAIN APPLICATION WORKSPACE
-        <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        <div className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50">
           
           {/* Header Area */}
-          <header className="bg-white border-b border-slate-200/80 px-4 py-3.5 flex items-center justify-between shrink-0 shadow-sm relative z-30">
+          <header className="bg-white border-b border-slate-200/80 px-4 py-3 flex items-center justify-between shrink-0 shadow-sm relative z-30">
             {/* Right Side: Title and Logo */}
-            <div className="flex items-center gap-3">
-              {/* Mobile Sidebar Trigger */}
+            <div className="flex items-center gap-2.5">
               <button
                 onClick={() => setIsMobileSidebarOpen(true)}
-                className="md:hidden p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-600 transition"
+                className="md:hidden p-2 bg-blue-50 text-blue-600 hover:bg-blue-100/80 rounded-xl transition-all duration-200 shrink-0"
                 title="تەواوی بابەتەکان"
               >
                 <Menu className="w-5 h-5" />
               </button>
 
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-                <Brain className="w-5 h-5" />
+              <div className="w-9 h-9 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-blue-500/15 shrink-0">
+                <Brain className="w-5 h-5 text-white" />
               </div>
               
               <div>
-                <h1 className="text-lg font-black text-slate-900 flex items-center gap-1.5 leading-none">
+                <h1 className="text-base font-black text-slate-900 flex items-center gap-1.5 leading-none">
                   <span>مامۆستای تایبەت</span>
-                  <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-bold">زیرەک 🤖</span>
+                  <span className="text-[10px] px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-md font-extrabold">زیرەک 🤖📚</span>
                 </h1>
-                <p className="text-[10px] text-slate-400 font-medium mt-0.5">پلاتفۆرمی هاوچەرخی فێربوونی وەزارەتی پەروەردە</p>
+                <p className="text-[9px] text-slate-400 font-bold mt-0.5 hidden sm:block">سیستەمی زیرەکی وەزارەتی پەروەردە</p>
               </div>
             </div>
 
-            {/* Middle Section: Active Information */}
-            <div className="hidden lg:flex items-center gap-3 bg-slate-50 border border-slate-200/60 rounded-2xl px-4 py-1.5 text-xs text-slate-600">
-              <span className="font-bold text-blue-700">ئامۆژگاری ڕۆژ:</span>
-              <span className="italic max-w-md truncate font-medium">{currentQuote}</span>
-              <button
-                onClick={() => {
-                  const randomQuote = ADVICE_QUOTES[Math.floor(Math.random() * ADVICE_QUOTES.length)];
-                  setCurrentQuote(randomQuote);
-                }}
-                className="text-slate-400 hover:text-blue-600 transition p-0.5"
-                title="نوێکردنەوە"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-              </button>
+            {/* Middle Section: Student Stats Dashboard */}
+            <div className="flex items-center gap-3.5 bg-blue-50/55 border border-blue-100/70 rounded-2xl px-4 py-1.5 text-xs text-slate-700 max-w-sm sm:max-w-md lg:max-w-xl">
+              <div className="flex items-center gap-1 shrink-0">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="font-extrabold text-slate-900">{studentName}</span>
+              </div>
+              <span className="text-slate-300">|</span>
+              <span className="font-bold text-blue-700 hidden xs:inline">{getRankByPoints(points).title}</span>
+              <span className="text-slate-300 hidden xs:inline">|</span>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className="px-2 py-0.5 rounded-md bg-white border border-blue-100 font-black text-slate-800 text-[10px]">
+                  پۆلی {grade === "9" ? "٩" : grade === "10" ? "١٠" : grade === "11" ? "١١" : "١٢"}
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-white border border-blue-100 font-black text-slate-800 text-[10px] hidden sm:inline">
+                  {studentLevel === "beginner" ? "سەرەتا" : studentLevel === "intermediate" ? "مامناوەند" : "پێشکەوتوو"}
+                </span>
+                <span className="font-black text-amber-600 flex items-center gap-0.5">
+                  <Award className="w-3.5 h-3.5 text-amber-500" />
+                  <span>{points} خاڵ</span>
+                </span>
+              </div>
             </div>
 
-            {/* Left Side: Student Controls */}
-            <div className="flex items-center gap-3">
-              <div className="text-right flex flex-col items-end">
-                <div className="text-xs font-black text-slate-900 leading-tight flex items-center gap-1.5 justify-end">
-                  <span>{studentName}</span>
-                  <span className="px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 text-[9px] font-black border border-amber-200">
-                    {getRankByPoints(points).title}
-                  </span>
-                </div>
-                <div className="text-[10px] text-slate-500 font-semibold flex items-center gap-1 mt-0.5 justify-end">
-                  <span>پۆلی {grade === "9" ? "٩" : grade === "10" ? "١٠" : grade === "11" ? "١١" : "١٢"}</span>
-                  <span>•</span>
-                  <span>ئاستی {studentLevel === "beginner" ? "سەرەتا" : studentLevel === "intermediate" ? "مامناوەند" : "پێشکەوتوو"}</span>
-                  <span>•</span>
-                  <span className="text-amber-600 font-black">{points} خاڵ</span>
-                </div>
-                
-                {/* Progress Bar */}
-                <div className="w-24 md:w-32 h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1 border border-slate-200/50 relative" title={`پێشکەوتن بەرەو پلەی داهاتوو: ${Math.round(getProgressPercent())}%`}>
-                  <div 
-                    className="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-500"
-                    style={{ width: `${getProgressPercent()}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Parent Report Button */}
+            {/* Left Side: Actions */}
+            <div className="flex items-center gap-2">
               <button
                 onClick={handleGenerateReport}
-                className="flex items-center gap-1 px-3 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl transition text-xs font-bold shadow-sm"
-                title="ڕاپۆرتی دایک و باوک"
+                className="flex items-center gap-1 px-3 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl transition-all duration-200 text-xs font-black shadow-sm"
+                title="ڕاپۆرتی پێشکەوتنی من بۆ دایک و باوک"
               >
                 <ClipboardList className="w-4 h-4 shrink-0" />
-                <span>ڕاپۆرتی من 📊</span>
+                <span className="hidden lg:inline">ڕاپۆرتی من 📊</span>
+                <span className="lg:hidden">ڕاپۆرت 📊</span>
               </button>
 
-              {/* New Evaluation Button */}
               <button
                 onClick={() => handleStartAssessment()}
-                className="flex items-center gap-1 px-3 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200/60 rounded-xl text-blue-700 hover:text-blue-800 transition text-xs font-bold shadow-sm"
-                title="تاقیکردنەوەی ئاستی نوێ"
+                className="flex items-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-200 text-xs font-black shadow-sm"
+                title="تاقیکردنەوەی ئاستی زانستی"
               >
-                <Award className="w-4 h-4 shrink-0 text-blue-600 animate-pulse" />
-                <span className="hidden sm:inline">هەڵسەنگاندنی نوێ</span>
+                <Award className="w-4 h-4 shrink-0 text-white" />
+                <span className="hidden lg:inline">هەڵسەنگاندنی نوێ 🏆</span>
+                <span className="lg:hidden">تاقیکردنەوە 🏆</span>
               </button>
 
-              {/* Settings Trigger */}
               <button
                 onClick={() => setIsSettingsOpen(true)}
-                className="p-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-slate-600 hover:text-blue-600 transition"
-                title="ڕێکخستنەکان"
+                className="p-2 bg-slate-100 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 rounded-xl text-slate-600 hover:text-blue-600 transition-all duration-200 shrink-0"
+                title="کلیلی زیرەکی"
               >
-                <Settings className="w-5 h-5" />
+                <Settings className="w-4.5 h-4.5" />
               </button>
 
-              {/* Logout/Reset Trigger */}
               <button
                 onClick={handleResetProfile}
-                className="p-2.5 bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl text-slate-600 hover:text-red-600 transition"
-                title="گۆڕینی ناو"
+                className="p-2 bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl text-slate-600 hover:text-red-600 transition-all duration-200 shrink-0"
+                title="دەستپێکردنەوە لە سەرەتاوە"
               >
-                <User className="w-5 h-5" />
+                <RotateCcw className="w-4.5 h-4.5" />
               </button>
             </div>
           </header>
@@ -914,57 +867,59 @@ export default function App() {
           <div className="flex-1 flex overflow-hidden">
             
             {/* DESKTOP SIDEBAR: Subjects and Curriculum Selector */}
-            <aside className="hidden md:flex w-80 bg-white border-l border-slate-200 flex-col shrink-0 overflow-hidden">
-              {/* Quick Select Panel */}
-              <div className="p-4 border-b border-slate-200 bg-slate-50/50 space-y-4">
+            <aside className="hidden md:flex w-80 bg-white border-l border-slate-200 flex-col shrink-0 overflow-hidden shadow-sm">
+              
+              {/* Sidebar Header Toggles */}
+              <div className="p-4 border-b border-slate-200 bg-slate-50/50 space-y-4 shrink-0">
                 
-                {/* 1. Grade Selectors */}
-                <div>
-                  <h3 className="text-[11px] font-bold text-slate-400 tracking-wider uppercase mb-2">دیاریکردنی پۆل:</h3>
-                  <div className="grid grid-cols-4 gap-1">
-                    {["9", "10", "11", "12"].map((g) => (
-                      <button
-                        key={g}
-                        onClick={() => handleQuickChangeGrade(g)}
-                        className={`py-1.5 px-0.5 rounded-lg text-[11px] font-black transition-all ${
-                          grade === g
-                            ? "bg-blue-600 text-white shadow-sm"
-                            : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
-                        }`}
-                      >
-                        پۆلی {g === "9" ? "٩" : g === "10" ? "١٠" : g === "11" ? "١١" : "١٢"}
-                      </button>
-                    ))}
+                {/* Grade and Level selectors */}
+                <div className="space-y-3">
+                  <div>
+                    <h3 className="text-[10px] font-black text-slate-400 tracking-wider uppercase mb-1.5">گۆڕینی خێرای پۆل:</h3>
+                    <div className="grid grid-cols-4 gap-1">
+                      {["9", "10", "11", "12"].map((g) => (
+                        <button
+                          key={g}
+                          onClick={() => handleQuickChangeGrade(g)}
+                          className={`py-1 rounded-lg text-xs font-black transition-all duration-200 ${
+                            grade === g
+                              ? "bg-blue-600 text-white shadow-sm"
+                              : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
+                          }`}
+                        >
+                          پۆلی {g === "9" ? "٩" : g === "10" ? "١٠" : g === "11" ? "١١" : "١٢"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-[10px] font-black text-slate-400 tracking-wider uppercase mb-1.5">ئاستی فێربوونی تۆ:</h3>
+                    <div className="grid grid-cols-3 gap-1">
+                      {[
+                        { key: "beginner", label: "سەرەتا" },
+                        { key: "intermediate", label: "مامناوەند" },
+                        { key: "advanced", label: "پێشکەوتوو" }
+                      ].map((lvl) => (
+                        <button
+                          key={lvl.key}
+                          onClick={() => handleQuickChangeLevel(lvl.key)}
+                          className={`py-1 rounded-lg text-[10px] font-black transition-all duration-200 ${
+                            studentLevel === lvl.key
+                              ? "bg-blue-600 text-white shadow-sm"
+                              : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
+                          }`}
+                        >
+                          {lvl.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* 2. Student Level Selectors */}
+                {/* Subject Selectors */}
                 <div>
-                  <h3 className="text-[11px] font-bold text-slate-400 tracking-wider uppercase mb-2">ئاستی فێربوونی قوتابی:</h3>
-                  <div className="grid grid-cols-3 gap-1">
-                    {[
-                      { key: "beginner", label: "سەرەتا" },
-                      { key: "intermediate", label: "مامناوەند" },
-                      { key: "advanced", label: "پێشکەوتوو" }
-                    ].map((lvl) => (
-                      <button
-                        key={lvl.key}
-                        onClick={() => handleQuickChangeLevel(lvl.key)}
-                        className={`py-1.5 px-0.5 rounded-lg text-[10px] font-black transition-all ${
-                          studentLevel === lvl.key
-                            ? "bg-blue-600 text-white shadow-sm"
-                            : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
-                        }`}
-                      >
-                        {lvl.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 3. Subject Selectors */}
-                <div>
-                  <h3 className="text-[11px] font-bold text-slate-400 tracking-wider uppercase mb-2">بابەتەکانی خوێندن:</h3>
+                  <h3 className="text-[10px] font-black text-slate-400 tracking-wider uppercase mb-1.5">بابەتی سەرەکی خوێندن:</h3>
                   <div className="grid grid-cols-2 gap-1.5">
                     {Object.entries(SUBJECT_METADATA).map(([key, meta]) => {
                       const isActive = activeSubject === key;
@@ -972,13 +927,13 @@ export default function App() {
                         <button
                           key={key}
                           onClick={() => handleQuickChangeSubject(key)}
-                          className={`flex items-center gap-1.5 py-2 px-2.5 rounded-xl border text-xs font-bold transition-all text-right ${
+                          className={`flex items-center gap-1.5 py-1.5 px-2.5 rounded-xl border text-xs font-black transition-all duration-200 text-right ${
                             isActive
                               ? "bg-blue-50 border-blue-600 text-blue-700 shadow-sm"
                               : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
                           }`}
                         >
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0" />
+                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isActive ? "bg-blue-600 animate-pulse" : "bg-slate-300"}`} />
                           <span>{meta.label}</span>
                         </button>
                       );
@@ -989,29 +944,29 @@ export default function App() {
               </div>
 
               {/* Scrollable Curriculum and Questions */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-6">
+              <div className="flex-1 overflow-y-auto p-4 space-y-5">
                 
                 {/* Curriculum Topics */}
                 <div>
-                  <div className="flex items-center gap-2 mb-3 text-blue-800">
-                    <BookOpen className="w-4 h-4" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider">تەوەرە فەرمییەکان</h4>
+                  <div className="flex items-center gap-1.5 mb-2.5 text-blue-800">
+                    <BookOpen className="w-4 h-4 text-blue-600 shrink-0" />
+                    <h4 className="text-xs font-extrabold uppercase tracking-wider">تەوەرە فەرمییەکان</h4>
                   </div>
 
                   {activeSubjectData.topics.length === 0 ? (
                     <p className="text-xs text-slate-400 italic">بۆ ئەم پۆلە هیچ زانیارییەک دیارینەکراوە.</p>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       {activeSubjectData.topics.map((topic) => (
                         <button
                           key={topic.id}
                           onClick={() => handleSelectTopic(topic.title)}
-                          className="w-full text-right p-3 rounded-xl border border-slate-200/60 hover:border-blue-300 bg-white hover:bg-blue-50/20 cursor-pointer transition-all block group"
+                          className="w-full text-right p-2.5 rounded-xl border border-slate-100 hover:border-blue-300 bg-slate-50/40 hover:bg-blue-50/20 cursor-pointer transition-all duration-200 block group"
                         >
-                          <h5 className="text-xs font-extrabold text-slate-800 group-hover:text-blue-700 transition">
+                          <h5 className="text-xs font-bold text-slate-800 group-hover:text-blue-700 transition">
                             {topic.title}
                           </h5>
-                          <p className="text-[10px] text-slate-400 mt-1 leading-normal truncate">
+                          <p className="text-[10px] text-slate-400 mt-0.5 leading-normal truncate font-medium">
                             {topic.description}
                           </p>
                         </button>
@@ -1021,53 +976,53 @@ export default function App() {
                 </div>
 
                 {/* Practical Exercises */}
-                <div>
-                  <div className="flex items-center gap-2 mb-3 text-blue-800">
-                    <BookOpenCheck className="w-4 h-4" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider font-sans">ڕاهێنانی کلیل و نموونە</h4>
+                <div className="pt-2">
+                  <div className="flex items-center gap-1.5 mb-2.5 text-blue-800">
+                    <BookOpenCheck className="w-4 h-4 text-blue-600 shrink-0" />
+                    <h4 className="text-xs font-extrabold uppercase tracking-wider">ڕاهێنانی کلیل و نموونە</h4>
                   </div>
 
                   {activeSubjectData.exercises.length === 0 ? (
                     <p className="text-xs text-slate-400 italic">ڕاهێنان نەکراوەتەوە بۆ ئەم پۆلە.</p>
                   ) : (
-                    <div className="space-y-3.5">
+                    <div className="space-y-3">
                       {activeSubjectData.exercises.map((ex) => {
                         const isSelected = selectedExerciseId === ex.id;
                         return (
                           <div
                             key={ex.id}
-                            className={`p-3 rounded-xl border transition-all ${
+                            className={`p-2.5 rounded-xl border transition-all duration-200 ${
                               isSelected
                                 ? "bg-blue-50/40 border-blue-400 shadow-sm"
-                                : "bg-white border-slate-200/80 hover:border-slate-300"
+                                : "bg-white border-slate-200/70 hover:border-slate-300"
                             }`}
                           >
                             <h5 className="text-xs font-bold text-slate-800">{ex.title}</h5>
-                            <div className="bg-slate-50 p-2 rounded-lg text-[10px] font-mono text-slate-600 border border-slate-200/50 my-2 whitespace-pre-wrap leading-relaxed">
+                            <div className="bg-slate-50 p-2 rounded-lg text-[10px] font-mono text-slate-600 border border-slate-200/30 my-2 whitespace-pre-wrap leading-relaxed">
                               {ex.question}
                             </div>
                             
-                            <div className="mt-2.5 flex justify-end gap-1.5">
+                            <div className="mt-2 flex justify-end gap-1">
                               <button
                                 onClick={() => handleSelectExercise(ex)}
-                                className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg transition"
+                                className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black rounded-lg transition-all duration-150"
                               >
                                 شیکارکردن
                               </button>
                               
                               <button
                                 onClick={() => handleSendPredefinedAnswer(ex)}
-                                className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-medium rounded-lg transition"
+                                className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-bold rounded-lg transition-all duration-150"
                               >
                                 پێشکەشکردنی وەڵام
                               </button>
                             </div>
 
                             <details className="mt-2 border-t border-slate-100 pt-1.5">
-                              <summary className="text-[9px] font-bold text-blue-600 cursor-pointer select-none">
+                              <summary className="text-[9px] font-black text-blue-600 cursor-pointer select-none hover:text-blue-700">
                                 بینینی ڕێنمایی (یارمەتیدەر)
                               </summary>
-                              <p className="text-[10px] text-slate-500 mt-1 leading-relaxed bg-slate-50 p-2 rounded-lg">
+                              <p className="text-[10px] text-slate-500 mt-1 leading-relaxed bg-slate-50 p-2 rounded-lg font-medium">
                                 {ex.hint}
                               </p>
                             </details>
@@ -1082,119 +1037,187 @@ export default function App() {
             </aside>
 
             {/* MAIN PORTAL AREA: Active Chat window */}
-            <main className="flex-1 flex flex-col h-full overflow-hidden bg-gradient-to-b from-slate-50/70 to-slate-100 relative z-10">
+            <main className="flex-1 flex flex-col h-full overflow-hidden bg-white relative z-10">
               
-              {/* Educational Subtitle Status */}
-              <div className="bg-blue-600 text-white px-4 py-2.5 text-xs font-semibold flex items-center justify-between shrink-0 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>مەیدانی فێربوونی: <strong className="font-extrabold">{SUBJECT_METADATA[activeSubject]?.label}</strong></span>
-                  <span className="opacity-75">•</span>
-                  <span>پۆلی: <strong className="font-extrabold">{grade}</strong></span>
-                  <span className="opacity-75">•</span>
-                  <span>ئاستی: <strong className="font-extrabold">{studentLevel === "beginner" ? "سەرەتا" : studentLevel === "intermediate" ? "مامناوەند" : "پێشکەوتوو"}</strong></span>
-                </div>
-                
-                {customApiKey && (
-                  <span className="bg-blue-500/80 px-2 py-0.5 rounded-lg text-[9px] font-mono font-bold border border-blue-400">
-                    کلیلی تایبەت چالاکە 🔑
+              {/* Responsive Quick Switcher Control Panel for Subject, Grade and Level */}
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 shrink-0 shadow-md">
+                <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
+                  <span className="bg-blue-700 px-2 py-1 rounded-md text-[10px] uppercase font-black tracking-wider border border-blue-500/30">
+                    ئێستا لێرەی:
                   </span>
-                )}
+                  <span className="flex items-center gap-1">
+                    <span>بابەت:</span>
+                    <strong className="font-extrabold text-amber-300">{SUBJECT_METADATA[activeSubject]?.label}</strong>
+                  </span>
+                  <span className="opacity-60">•</span>
+                  <span className="flex items-center gap-1">
+                    <span>پۆلی:</span>
+                    <strong className="font-extrabold text-amber-300">{grade === "9" ? "٩" : grade === "10" ? "١٠" : grade === "11" ? "١١" : "١٢"}</strong>
+                  </span>
+                  <span className="opacity-60">•</span>
+                  <span className="flex items-center gap-1">
+                    <span>ئاستی:</span>
+                    <strong className="font-extrabold text-amber-300">
+                      {studentLevel === "beginner" ? "سەرەتا" : studentLevel === "intermediate" ? "مامناوەند" : "پێشکەوتوو"}
+                    </strong>
+                  </span>
+                </div>
+
+                {/* Horizontally scrolling Subject picker for mobile dynamically placed in top-bar */}
+                <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+                  {Object.entries(SUBJECT_METADATA).map(([key, meta]) => {
+                    const isActive = activeSubject === key;
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => handleQuickChangeSubject(key)}
+                        className={`px-3 py-1 text-[11px] font-black rounded-lg transition-all shrink-0 duration-150 ${
+                          isActive 
+                            ? "bg-white text-blue-700 shadow-sm font-extrabold border border-white"
+                            : "bg-blue-700/60 text-blue-100 hover:bg-blue-700 border border-transparent"
+                        }`}
+                      >
+                        {meta.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Chat Message Scroll Panel */}
-              <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-                {messages.map((msg) => {
-                  const isAssistant = msg.role === "assistant";
-                  return (
-                    <div key={msg.id} className="space-y-3">
-                      <div
-                        className={`flex gap-3.5 max-w-4xl ${
-                          isAssistant ? "mr-0 ml-auto" : "mr-auto ml-0 flex-row-reverse"
-                        }`}
-                      >
-                        {/* Avatar container */}
-                        <div className={`w-9 h-9 rounded-full shrink-0 flex items-center justify-center font-bold text-xs shadow-sm ${
-                          isAssistant
-                            ? "bg-blue-600 text-white ring-4 ring-blue-50 border border-blue-400"
-                            : "bg-slate-800 text-white ring-4 ring-slate-100 border border-slate-700"
-                        }`}>
-                          {isAssistant ? "م" : studentName.substring(0, 2)}
-                        </div>
-
-                        {/* Chat text box */}
-                        <div className="space-y-1 max-w-[85%]">
-                          <div className={`text-[10px] font-bold text-slate-400 flex items-center gap-1.5 ${
-                            isAssistant ? "justify-start" : "justify-end"
-                          }`}>
-                            <span>{isAssistant ? "مامۆستای تایبەت 🤖📚" : studentName}</span>
-                            <span className="font-normal opacity-85">
-                              {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          </div>
-
-                          <div className={`px-4.5 py-3.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap shadow-sm ${
-                            isAssistant
-                              ? "bg-white text-slate-800 border border-slate-200/80 rounded-tr-none"
-                              : "bg-blue-600 text-white rounded-tl-none font-medium"
-                          }`}>
-                            {/* Markdown renderer for Kurdish headers */}
-                            {msg.content.split("\n").map((line, idx) => {
-                              if (line.startsWith("### ")) {
-                                return <h4 key={idx} className="font-extrabold text-blue-900 mt-4 mb-1.5 first:mt-1">{line.replace("### ", "")}</h4>;
-                              }
-                              if (line.startsWith("## ")) {
-                                return <h3 key={idx} className="font-black text-base text-blue-900 mt-5 mb-2 first:mt-1 border-b pb-1 border-slate-100">{line.replace("## ", "")}</h3>;
-                              }
-                              if (line.startsWith("- ") || line.startsWith("* ")) {
-                                return <li key={idx} className="list-disc list-inside mr-2 text-slate-700 my-1 font-normal leading-relaxed">{line.substring(2)}</li>;
-                              }
-                              
-                              const parts = line.split(/\*\*(.*?)\*\*/g);
-                              return (
-                                <p key={idx} className="mb-2 last:mb-0">
-                                  {parts.map((part, i) => i % 2 === 1 ? <strong key={i} className={isAssistant ? "text-blue-700 font-extrabold" : "text-blue-100 font-black"}>{part}</strong> : part)}
-                                </p>
-                              );
-                            })}
-                          </div>
-                        </div>
+              <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5 bg-slate-50/50">
+                {messages.length === 0 ? (
+                  // Nice EMPTY STATE when no messages exist (never occurs normally, but beautiful fallback)
+                  <div className="h-full flex items-center justify-center p-6 text-center">
+                    <div className="max-w-md bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-sm">
+                      <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto">
+                        <Sparkles className="w-6 h-6" />
                       </div>
-
-                      {msg.isAssessmentPrompt && (
-                        <div className="flex gap-2 justify-start mr-12 ml-4">
-                          <button
-                            onClick={() => handleStartAssessment(true)}
-                            className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-md shadow-emerald-600/10 transition-all flex items-center gap-1.5"
-                          >
-                            <Award className="w-4.5 h-4.5" />
-                            بەڵێ، دەست پێ بکە
-                          </button>
-                          <button
-                            onClick={() => handleDeclineAssessment(msg.id)}
-                            className="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition"
-                          >
-                            دواتر دەکەم
-                          </button>
-                        </div>
-                      )}
+                      <h3 className="text-base font-black text-slate-800">وانەکەت دەست پێبکە! 🤖</h3>
+                      <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                        تکایە هەر ئێستا پرسیارێکی خۆت لە خوارەوە بنووسە یان یەکێک لە بابەتەکانی لای ڕاست دیاری بکە بۆ دەستپێکردنی گفتوگۆیەکی فێرکاری سەرنجڕاکێش.
+                      </p>
                     </div>
-                  );
-                })}
+                  </div>
+                ) : (
+                  messages.map((msg) => {
+                    const isAssistant = msg.role === "assistant";
+                    return (
+                      <div key={msg.id} className="space-y-2">
+                        <div
+                          className={`flex gap-3 max-w-4xl transition-all duration-300 ${
+                            isAssistant ? "mr-0 ml-auto" : "mr-auto ml-0 flex-row-reverse"
+                          }`}
+                        >
+                          {/* Avatar container */}
+                          <div className={`w-9 h-9 rounded-xl shrink-0 flex items-center justify-center font-black text-xs shadow-sm transition-all duration-300 ${
+                            isAssistant
+                              ? "bg-gradient-to-tr from-blue-600 to-indigo-600 text-white ring-4 ring-blue-50"
+                              : "bg-gradient-to-tr from-slate-700 to-slate-950 text-white ring-4 ring-slate-100"
+                          }`}>
+                            {isAssistant ? "م" : studentName.substring(0, 1)}
+                          </div>
+
+                          {/* Chat text box */}
+                          <div className="space-y-1 max-w-[85%] md:max-w-[78%]">
+                            {/* Author details */}
+                            <div className={`text-[10px] font-black text-slate-400 flex items-center gap-1.5 ${
+                              isAssistant ? "justify-start" : "justify-end"
+                            }`}>
+                              <span>{isAssistant ? "مامۆستای تایبەت 🤖📚" : studentName}</span>
+                              <span className="font-medium opacity-75">
+                                {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+
+                            {/* Message bubble */}
+                            <div className={`px-4 py-3 rounded-2xl text-[13px] leading-relaxed whitespace-pre-wrap shadow-sm font-medium border ${
+                              isAssistant
+                                ? "bg-white text-slate-800 border-slate-200/60 rounded-tr-none"
+                                : "bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-blue-500/20 rounded-tl-none"
+                            }`}>
+                              {/* Markdown renderer for Kurdish headers */}
+                              {msg.content.split("\n").map((line, idx) => {
+                                if (line.startsWith("### ")) {
+                                  return (
+                                    <h4 key={idx} className={`font-black text-xs md:text-sm mt-3.5 mb-1.5 first:mt-1 ${
+                                      isAssistant ? "text-blue-800" : "text-amber-200"
+                                    }`}>
+                                      {line.replace("### ", "")}
+                                    </h4>
+                                  );
+                                }
+                                if (line.startsWith("## ")) {
+                                  return (
+                                    <h3 key={idx} className={`font-black text-sm md:text-base mt-4 mb-2 first:mt-1 border-b pb-1 ${
+                                      isAssistant ? "text-indigo-900 border-slate-100" : "text-amber-100 border-blue-500/30"
+                                    }`}>
+                                      {line.replace("## ", "")}
+                                    </h3>
+                                  );
+                                }
+                                if (line.startsWith("- ") || line.startsWith("* ")) {
+                                  return (
+                                    <li key={idx} className={`list-disc list-inside mr-2 my-1 leading-relaxed ${
+                                      isAssistant ? "text-slate-700" : "text-blue-50"
+                                    }`}>
+                                      {line.substring(2)}
+                                    </li>
+                                  );
+                                }
+                                
+                                const parts = line.split(/\*\*(.*?)\*\*/g);
+                                return (
+                                  <p key={idx} className="mb-1.5 last:mb-0">
+                                    {parts.map((part, i) => i % 2 === 1 
+                                      ? <strong key={i} className={isAssistant ? "text-blue-700 font-extrabold" : "text-amber-300 font-black"}>{part}</strong> 
+                                      : part
+                                    )}
+                                  </p>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Special Assessment Mode option buttons */}
+                        {msg.isAssessmentPrompt && (
+                          <div className="flex gap-2 justify-start mr-12 ml-4">
+                            <button
+                              onClick={() => handleStartAssessment(true)}
+                              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-black rounded-xl shadow-md shadow-emerald-600/10 transition-all duration-150 flex items-center gap-1"
+                            >
+                              <Award className="w-4 h-4 shrink-0 text-white" />
+                              <span>بەڵێ، دەست پێ بکە</span>
+                            </button>
+                            <button
+                              onClick={() => handleDeclineAssessment(msg.id)}
+                              className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-black rounded-xl transition"
+                            >
+                              دواتر دەکەم
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
 
                 {/* Loading State Bubble */}
                 {isLoading && (
-                  <div className="flex gap-3.5 max-w-lg mr-0 ml-auto">
-                    <div className="w-9 h-9 rounded-full bg-blue-600 text-white shrink-0 flex items-center justify-center font-bold text-xs animate-bounce border border-blue-400">
+                  <div className="flex gap-3 max-w-lg mr-0 ml-auto">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shrink-0 flex items-center justify-center font-black text-xs animate-pulse shadow-sm">
                       م
                     </div>
                     <div className="space-y-1">
-                      <div className="text-[10px] font-bold text-slate-400">مامۆستای تایبەت 🤖📚</div>
-                      <div className="bg-white border border-slate-200/80 shadow-sm px-4.5 py-3 rounded-2xl rounded-tr-none flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                        <span className="text-[11px] text-slate-400 mr-2 font-medium">مامۆستا خەریکی شیکارکردنە...</span>
+                      <div className="text-[10px] font-black text-slate-400">مامۆستای تایبەت 🤖📚</div>
+                      <div className="bg-white border border-slate-200/80 shadow-sm px-4 py-3 rounded-2xl rounded-tr-none flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <span className="w-2 h-2 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                          <span className="w-2 h-2 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                          <span className="w-2 h-2 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                        </div>
+                        <span className="text-xs text-slate-400 font-bold mr-2">مامۆستا خەریکی داڕشتنی وەڵامەکەیە...</span>
                       </div>
                     </div>
                   </div>
@@ -1203,61 +1226,61 @@ export default function App() {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Suggestions Quick Buttons */}
-              <div className="px-4 py-2 bg-slate-50 border-t border-slate-200/80 overflow-x-auto flex gap-1.5 shrink-0 select-none">
+              {/* Suggestions Quick Action Buttons */}
+              <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-200/80 overflow-x-auto flex gap-2 shrink-0 select-none no-scrollbar">
                 <button
                   onClick={() => handleSendMessage("مامۆستا دەتوانیت فۆرمولە و هاوکێشەکەم بە کوردی زیاتر ڕوون بکەیتەوە؟")}
-                  className="px-3 py-1.5 bg-white hover:bg-blue-50 border border-slate-200 text-slate-600 hover:text-blue-600 rounded-full text-xs font-bold shrink-0 transition"
+                  className="px-3 py-1.5 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-700 rounded-full text-xs font-black shrink-0 transition"
                 >
                   📝 ڕوونکردنەوەی فۆرمولەکە
                 </button>
                 <button
                   onClick={() => handleSendMessage("ئەتوانیت یەک نموونەی تاقیگەیی یان کارپێکراوم بۆ بهێنیتەوە بۆ تێگەیشتن؟")}
-                  className="px-3 py-1.5 bg-white hover:bg-blue-50 border border-slate-200 text-slate-600 hover:text-blue-600 rounded-full text-xs font-bold shrink-0 transition"
+                  className="px-3 py-1.5 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-700 rounded-full text-xs font-black shrink-0 transition"
                 >
                   💡 نموونەی ژیانی ڕۆژانە
                 </button>
                 <button
                   onClick={() => handleSendMessage("من کەمێک لەم بابەتە دەترسم، چۆن زووتر فێری ببم مامۆستا؟")}
-                  className="px-3 py-1.5 bg-white hover:bg-blue-50 border border-slate-200 text-slate-600 hover:text-blue-600 rounded-full text-xs font-bold shrink-0 transition"
+                  className="px-3 py-1.5 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-700 rounded-full text-xs font-black shrink-0 transition"
                 >
                   💖 ئامۆژگاری دەروونی و هاندان
                 </button>
                 <button
                   onClick={() => handleSendMessage("زۆر سوپاس بۆ ڕوونکردنەوەی جوان، ئێستا بە تەواوی ئامادەم بۆ پرسیارەکەی کۆتایی!")}
-                  className="px-3 py-1.5 bg-white hover:bg-blue-50 border border-slate-200 text-slate-600 hover:text-blue-600 rounded-full text-xs font-bold shrink-0 transition"
+                  className="px-3 py-1.5 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-700 rounded-full text-xs font-black shrink-0 transition"
                 >
                   👍 وەڵامدانەوەی ڕاهێنانەکە
                 </button>
               </div>
 
-              {/* Bottom Send Action Bar */}
-              <div className="p-4 bg-white border-t border-slate-200/80 shrink-0">
+              {/* Bottom Send Action Bar: Fixed above browser elements on mobile */}
+              <div className="p-4 bg-white border-t border-slate-200 shrink-0">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
                     handleSendMessage();
                   }}
-                  className="flex gap-2"
+                  className="flex gap-2 items-center"
                 >
                   <input
                     type="text"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    placeholder={`پرسیار لەسەر بابەت بنووسە بۆ مامۆستا...`}
-                    className="flex-1 px-4 py-3.5 bg-slate-50 hover:bg-slate-100/80 focus:bg-white rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-slate-800 text-sm font-medium transition"
+                    placeholder={`پرسیار لەسەر بابەتەکە بنووسە بۆ مامۆستا...`}
+                    className="flex-1 px-4 py-3 bg-slate-50 hover:bg-slate-100/50 focus:bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 text-sm font-bold transition-all"
                   />
                   <button
                     type="submit"
                     disabled={isLoading || !inputValue.trim()}
-                    className="px-6 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-400 text-white rounded-2xl shadow-md font-bold text-sm transition-all flex items-center justify-center gap-1.5"
+                    className="px-5 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-400 text-white rounded-xl shadow-md font-black text-sm transition-all duration-150 flex items-center gap-1 shrink-0"
                   >
                     <span>ناردن</span>
                     <Send className="w-4 h-4 rotate-180" />
                   </button>
                 </form>
                 
-                <div className="text-[10px] text-slate-400 text-center mt-2.5 font-medium">
+                <div className="text-[9px] text-slate-400 text-center mt-2 font-bold uppercase tracking-wider">
                   دیوانی فەرمی خوێندنی گشتی و زمان • پەروەردەی سەردەم • بە بێ بەرامبەر و زیرەک
                 </div>
               </div>
@@ -1268,47 +1291,47 @@ export default function App() {
 
           {/* 3. SETTINGS MODAL (Gemini API Configuration) */}
           {isSettingsOpen && (
-            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+            <div className="fixed inset-0 bg-slate-900/65 backdrop-blur-md z-[999] flex items-center justify-center p-4">
               <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl border border-slate-100 relative overflow-hidden">
-                <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                  <div className="flex items-center gap-2 text-blue-800">
+                <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                  <div className="flex items-center gap-2 text-blue-700">
                     <Settings className="w-5 h-5" />
-                    <h3 className="font-extrabold text-sm">ڕێکخستنی کلیلی زیرەکی (Gemini API Key)</h3>
+                    <h3 className="font-black text-sm">ڕێکخستنی کلیلی زیرەکی (Gemini API Key)</h3>
                   </div>
                   <button
                     onClick={() => setIsSettingsOpen(false)}
-                    className="p-1 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition"
+                    className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 <div className="p-6 space-y-4">
-                  <div className="p-3 bg-blue-50 text-blue-800 text-xs rounded-xl leading-relaxed flex gap-2">
-                    <Info className="w-4 h-4 shrink-0 mt-0.5" />
-                    <div>
-                      ئەم پلاتفۆرمە بە خۆڕایی و بە شێوازێکی پارێزراو بەستراوەتەوە بە سێرڤەری گشتی. بەڵام ئەگەر دەتەوێت بۆ پێشخستن کلیلی خۆت بەکاربهێنیت، لە خوارەوە بینوسە. کلیلەکەت تەنها لەناو وێبگەڕەکەتدا پاشەکەوت دەبێت.
+                  <div className="p-4 bg-blue-50/60 text-blue-800 text-xs rounded-xl leading-relaxed flex gap-2.5 border border-blue-100">
+                    <Info className="w-4.5 h-4.5 shrink-0 text-blue-600 mt-0.5" />
+                    <div className="font-medium">
+                      ئەم پلاتفۆرمە بە شێوازێکی بێ بەرامبەر بەستراوەتەوە بە سێرڤەری گشتی کۆمپانیا. بەڵام ئەگەر دەتەوێت بۆ پێشخستن کلیلی تایبەتی خۆت بەکاربهێنیت، لێرەدا دەتوانیت جێگیری بکەیت.
                     </div>
                   </div>
 
                   <form onSubmit={handleSaveApiKey} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">کلیلی Gemini API:</label>
+                      <label className="block text-xs font-black text-slate-700 mb-1.5">کلیلی Gemini API تایبەت بە خۆت:</label>
                       <input
                         type="password"
                         value={apiKeyInput}
                         onChange={(e) => setApiKeyInput(e.target.value)}
-                        placeholder={customApiKey ? "••••••••••••••••••••••••••••" : "کلیلەکە لێرە لکێنە (AI_...) ..."}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-2xl text-xs font-mono"
+                        placeholder={customApiKey && customApiKey !== "YOUR_API_KEY_HERE" ? "••••••••••••••••••••••••••••" : "کلیلەکە لێرە بنووسە (AI_...) ..."}
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-xl text-xs font-mono"
                       />
                     </div>
 
-                    <div className="flex gap-2 justify-end pt-2">
-                      {customApiKey && (
+                    <div className="flex gap-2 justify-end pt-3 border-t border-slate-100">
+                      {customApiKey && customApiKey !== "YOUR_API_KEY_HERE" && (
                         <button
                           type="button"
                           onClick={handleClearApiKey}
-                          className="px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-xl text-xs transition"
+                          className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-black rounded-xl text-xs transition"
                         >
                           سڕینەوەی کلیلەکە
                         </button>
@@ -1316,9 +1339,9 @@ export default function App() {
                       
                       <button
                         type="submit"
-                        className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition"
+                        className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-xs transition"
                       >
-                        پاشەکەوتکردن
+                        پاشەکەوتکردنی کلیل
                       </button>
                     </div>
                   </form>
@@ -1329,10 +1352,10 @@ export default function App() {
 
           {/* 4. MOBILE SIDEBAR DRAWER (Sliding subject select) */}
           {isMobileSidebarOpen && (
-            <div className="fixed inset-0 z-40 flex md:hidden animate-fade-in">
+            <div className="fixed inset-0 z-[999] flex md:hidden">
               {/* Overlay Backdrop */}
               <div 
-                className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs" 
+                className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs" 
                 onClick={() => setIsMobileSidebarOpen(false)}
               />
 
@@ -1342,8 +1365,8 @@ export default function App() {
                 {/* Header inside drawer */}
                 <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                   <div className="flex items-center gap-2">
-                    <Brain className="w-5 h-5 text-blue-600" />
-                    <span className="font-extrabold text-slate-800 text-xs">ڕێکخستنەکان و بابەتەکان</span>
+                    <Brain className="w-5 h-5 text-blue-600 shrink-0" />
+                    <span className="font-black text-slate-800 text-xs">بابەتەکان و پۆل</span>
                   </div>
                   <button
                     onClick={() => setIsMobileSidebarOpen(false)}
@@ -1354,7 +1377,7 @@ export default function App() {
                 </div>
 
                 {/* Content with Scroll */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                <div className="flex-1 overflow-y-auto p-4 space-y-5">
                   
                   {/* Select Grade */}
                   <div>
@@ -1397,7 +1420,7 @@ export default function App() {
                           className={`py-2 rounded-lg text-xs font-black transition-all ${
                             studentLevel === lvl.key
                               ? "bg-blue-600 text-white shadow-sm"
-                              : "bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100"
+                              : "bg-slate-50 border border-slate-200 text-slate-600"
                           }`}
                         >
                           {lvl.label}
@@ -1416,13 +1439,13 @@ export default function App() {
                           <button
                             key={key}
                             onClick={() => handleQuickChangeSubject(key)}
-                            className={`flex items-center gap-3 py-3 px-4 rounded-xl border text-sm font-bold transition-all text-right ${
+                            className={`flex items-center gap-2.5 py-3 px-4 rounded-xl border text-sm font-black transition-all text-right ${
                               isActive
                                 ? "bg-blue-50 border-blue-600 text-blue-700 shadow-sm"
                                 : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
                             }`}
                           >
-                            <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0 animate-pulse" />
                             <span>{meta.label}</span>
                           </button>
                         );
@@ -1433,7 +1456,7 @@ export default function App() {
                   {/* Topics List on Mobile */}
                   <div className="pt-4 border-t border-slate-100">
                     <h4 className="text-xs font-black text-blue-800 mb-2.5 flex items-center gap-1.5">
-                      <BookOpen className="w-4 h-4" />
+                      <BookOpen className="w-4 h-4 text-blue-600 shrink-0" />
                       <span>تەوەرە فەرمییەکان</span>
                     </h4>
                     <div className="space-y-1.5">
@@ -1470,7 +1493,7 @@ export default function App() {
             
             <div className="space-y-2 relative z-10">
               <h3 className="text-xl font-black text-slate-900">سەرکەوتن بۆ ئاستی نوێ! 🎉</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs text-slate-500 leading-relaxed font-medium">
                 هەوڵەکانت بەرهەمیان هەبوو! تۆ ئێستا لە ئاستێکی بەرزتردایت لەگەڵ مامۆستای تایبەت.
               </p>
             </div>
@@ -1483,7 +1506,7 @@ export default function App() {
               <div className="w-px h-8 bg-slate-200" />
               <div className="text-center">
                 <span className="block text-[10px] text-amber-500 font-black flex items-center gap-0.5 justify-center">
-                  <Sparkles className="w-3 h-3 text-amber-500" /> پلەی نوێ
+                  <Sparkles className="w-3 h-3 text-amber-500 animate-spin" /> پلەی نوێ
                 </span>
                 <span className="text-sm font-black text-amber-700">{showLevelUpAlert.newRank}</span>
               </div>
@@ -1501,13 +1524,13 @@ export default function App() {
 
       {/* Floating Points-Earned Toast Indicator */}
       {pointsToast && pointsToast.show && (
-        <div className="fixed bottom-24 left-6 bg-slate-900/90 backdrop-blur-md border border-slate-700/50 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 z-[999] animate-bounce max-w-sm" dir="rtl">
+        <div className="fixed bottom-24 left-6 bg-slate-900/95 backdrop-blur-md border border-slate-700/50 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 z-[999] animate-bounce max-w-sm" dir="rtl">
           <div className="w-8 h-8 rounded-xl bg-amber-500 flex items-center justify-center font-black text-white text-xs shrink-0 shadow-md shadow-amber-500/20">
             +{pointsToast.amount}
           </div>
           <div className="text-right">
             <div className="text-xs font-black text-amber-400">خاڵ بەدەستهات! 🌟</div>
-            <div className="text-[10px] text-slate-300 font-semibold mt-0.5">{pointsToast.reason}</div>
+            <div className="text-[10px] text-slate-300 font-bold mt-0.5">{pointsToast.reason}</div>
           </div>
         </div>
       )}
@@ -1538,12 +1561,12 @@ export default function App() {
             {/* Modal Header */}
             <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                  <ClipboardList className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                  <ClipboardList className="w-5 h-5 text-emerald-700" />
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-slate-900">ڕاپۆرتی فەرمی دایک و باوک 📊</h3>
-                  <p className="text-[10px] text-slate-400 font-bold">بۆ چاودێریکردنی ئاست و پێشکەوتنی قوتابی لە ماڵەوە</p>
+                  <p className="text-[10px] text-slate-400 font-bold">چاودێریکردنی ئاست و پێشکەوتنی قوتابی لە ماڵەوە</p>
                 </div>
               </div>
               <button
@@ -1562,7 +1585,7 @@ export default function App() {
               <div className="border-2 border-emerald-500/20 bg-emerald-50/30 rounded-2xl p-5 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-emerald-100">
                   <div className="space-y-1">
-                    <div className="text-[10px] text-emerald-700 font-extrabold tracking-wider uppercase">حکومەتی هەرێمی کوردستان • وەزارەتی پەروەردە</div>
+                    <div className="text-[10px] text-emerald-700 font-extrabold tracking-wider uppercase">کۆماری عێراق • حکومەتی هەرێمی کوردستان</div>
                     <div className="text-base font-black text-slate-900">ڕاپۆرتی فێربوونی زیرەک (دایک و باوک)</div>
                     <div className="text-[10px] text-slate-400 font-bold">پلاتفۆرمی نیشتمانی "مامۆستای تایبەت"</div>
                   </div>
@@ -1599,7 +1622,7 @@ export default function App() {
                   {/* KPI 1 */}
                   <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-4 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
-                      <HelpCircle className="w-5 h-5" />
+                      <HelpCircle className="w-5 h-5 text-blue-700" />
                     </div>
                     <div>
                       <span className="block text-[10px] text-slate-400 font-extrabold">کۆی پرسیارەکان</span>
@@ -1610,7 +1633,7 @@ export default function App() {
                   {/* KPI 2 */}
                   <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-4 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-                      <Clock className="w-5 h-5" />
+                      <Clock className="w-5 h-5 text-amber-700" />
                     </div>
                     <div>
                       <span className="block text-[10px] text-slate-400 font-extrabold">کاتی خوێندن (خەمڵێنراو)</span>
@@ -1623,7 +1646,7 @@ export default function App() {
                   {/* KPI 3 */}
                   <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-4 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
-                      <BookOpen className="w-5 h-5" />
+                      <BookOpen className="w-5 h-5 text-rose-700" />
                     </div>
                     <div>
                       <span className="block text-[10px] text-slate-400 font-extrabold">بابەتی زۆرترین پرسیار</span>
@@ -1650,7 +1673,7 @@ export default function App() {
                     <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
                     <div className="space-y-1">
                       <p className="text-xs font-black text-slate-800">لە کاتی شیکارکردنی کارامەییەکانی قوتابی...</p>
-                      <p className="text-[10px] text-slate-400 font-semibold">ژیری دەستکرد خەریکی ئامادەکردنی ڕاپۆرتێکی گونجاوە بۆ دایک و باوک.</p>
+                      <p className="text-[10px] text-slate-400 font-bold">ژیری دەستکرد خەریکی ئامادەکردنی ڕاپۆرتێکی گونجاوە بۆ دایک و باوک.</p>
                     </div>
                   </div>
                 ) : reportError ? (
@@ -1658,13 +1681,13 @@ export default function App() {
                     <p className="text-xs text-red-700 font-bold">{reportError}</p>
                     <button
                       onClick={handleGenerateReport}
-                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition"
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black transition"
                     >
                       دووبارە هەوڵبدەرەوە 🔄
                     </button>
                   </div>
                 ) : (
-                  <div className="border border-slate-200/80 rounded-2xl p-5 bg-white text-slate-700 text-xs leading-relaxed space-y-3 shadow-inner overflow-hidden whitespace-pre-wrap font-medium">
+                  <div className="border border-slate-200/80 rounded-2xl p-5 bg-slate-50/30 text-slate-800 text-xs leading-relaxed space-y-3 shadow-inner overflow-hidden whitespace-pre-wrap font-bold">
                     {reportSuggestions}
                   </div>
                 )}
@@ -1687,16 +1710,16 @@ export default function App() {
             <div className="p-4 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row items-center justify-end gap-2 shrink-0">
               <button
                 onClick={() => setIsReportOpen(false)}
-                className="w-full sm:w-auto px-5 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 transition"
+                className="w-full sm:w-auto px-5 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-700 transition"
               >
                 داخستن
               </button>
               <button
                 onClick={() => window.print()}
                 disabled={isGeneratingReport}
-                className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/10 disabled:opacity-50"
+                className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/10 disabled:opacity-50"
               >
-                <Printer className="w-4 h-4" />
+                <Printer className="w-4 h-4 text-white" />
                 <span>پرینت کردن / پاشەکەوت وەک PDF 🖨️</span>
               </button>
             </div>
@@ -1706,7 +1729,7 @@ export default function App() {
 
       {/* Hidden layout specifically rendered for print screen */}
       {isReportOpen && (
-        <div id="printable-report-wrapper" className="hidden print-only" dir="rtl">
+        <div id="printable-report-wrapper" className="hidden print-only animate-none" dir="rtl">
           <div className="max-w-4xl mx-auto space-y-8 bg-white text-black p-8 font-sans">
             {/* Header */}
             <div className="border-b-4 border-emerald-600 pb-5 flex justify-between items-end">
@@ -1764,7 +1787,7 @@ export default function App() {
             {/* Recommendations */}
             <div className="space-y-2">
               <h3 className="text-xs font-black text-slate-500 uppercase tracking-wide">📋 ڕاسپاردەکانی مامۆستای زیرەک بۆ دایک و باوک:</h3>
-              <div className="border border-slate-200 rounded-2xl p-6 bg-white text-slate-800 text-xs leading-relaxed whitespace-pre-wrap font-medium">
+              <div className="border border-slate-200 rounded-2xl p-6 bg-white text-slate-800 text-xs leading-relaxed whitespace-pre-wrap font-bold">
                 {reportSuggestions || "لە کاتی ئامادەکردنی زانیارییەکان..."}
               </div>
             </div>
