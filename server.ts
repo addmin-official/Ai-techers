@@ -44,6 +44,53 @@ function getGeminiClient(customApiKey?: string): GoogleGenAI {
   return defaultAiClient;
 }
 
+// Resilient helper to call Gemini API with exponential backoff retry and model fallback
+async function generateContentWithRetry(
+  ai: GoogleGenAI,
+  options: {
+    contents: any;
+    config?: any;
+  }
+) {
+  const modelsToTry = ["gemini-3.5-flash", "gemini-3.1-flash-lite"];
+  let lastError: any = null;
+
+  for (const model of modelsToTry) {
+    let attempts = 3;
+    let delay = 1000;
+
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+      try {
+        console.log(`Calling Gemini API using model [${model}] (Attempt ${attempt}/${attempts})...`);
+        const response = await ai.models.generateContent({
+          model,
+          contents: options.contents,
+          config: options.config,
+        });
+        return response;
+      } catch (err: any) {
+        lastError = err;
+        console.error(`Error with model [${model}] on attempt ${attempt}:`, err?.message || err);
+
+        // If it's a client bad request (e.g. 400), don't retry, just try the next model or fail
+        const status = err?.status || err?.statusCode;
+        const isClientError = status === 400 || (err?.message && err.message.includes("400"));
+        if (isClientError) {
+          break;
+        }
+
+        if (attempt < attempts) {
+          // Wait with exponential backoff before retrying
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          delay *= 2;
+        }
+      }
+    }
+  }
+
+  throw lastError || new Error("Failed to generate content after all retries and model fallbacks.");
+}
+
 // REST API endpoint for chat with Mamosta Hemin
 app.post("/api/chat", async (req, res) => {
   try {
@@ -119,8 +166,7 @@ app.post("/api/chat", async (req, res) => {
       parts: [{ text: msg.content || "" }]
     }));
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
+    const response = await generateContentWithRetry(ai, {
       contents: formattedContents,
       config: {
         systemInstruction,
@@ -172,8 +218,7 @@ app.post("/api/report-suggestions", async (req, res) => {
 `;
 
     const ai = getGeminiClient(customKey);
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
+    const response = await generateContentWithRetry(ai, {
       contents: "تکایە پێشنیارەکان و هەڵسەنگاندنەکە بۆ دایک و باوک بنووسە بە زمانی کوردی سۆرانی.",
       config: {
         systemInstruction,
