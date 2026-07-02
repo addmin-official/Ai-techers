@@ -1,0 +1,6 @@
+{
+  "name": "Mamosta Taybet",
+  "description": "An interactive, educational blue & white themed AI Private Tutor for Kurdish Sorani students in grades 9-12 with tailored intelligence levels for Mathematics, Physics, Chemistry, and English.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
